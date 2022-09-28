@@ -11,11 +11,11 @@ namespace API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class DivisionController : ControllerBase
+    public class PositionController : ControllerBase
     {
         MyContext myContext;
 
-        public DivisionController(MyContext myContext)
+        public PositionController(MyContext myContext)
         {
             this.myContext = myContext;
         }
@@ -24,7 +24,7 @@ namespace API.Controllers
         [HttpGet]
         public IActionResult Index()
         {
-            var data = myContext.Divisions.ToList();
+            var data = myContext.Positions.ToList();
             if (data != null)
             {
                 return Ok(new { message = "Sukses", statusCode = 200, data = data });
@@ -38,7 +38,7 @@ namespace API.Controllers
         [HttpGet("{id}")]
         public IActionResult Index(int id)
         {
-            var data = myContext.Divisions.Find(id);
+            var data = myContext.Positions.Find(id);
 
             if (data != null)
             {
@@ -54,10 +54,10 @@ namespace API.Controllers
 
         //CREATE
         [HttpPost]
-        public IActionResult Post(Division division)
+        public IActionResult Post(Position position)
         {
 
-            myContext.Divisions.Add(division);
+            myContext.Positions.Add(position);
             if (myContext.SaveChanges() > 0)
             {
                 return Ok(new { message = "Sukses tambah data", statusCode = 200 });
@@ -73,11 +73,11 @@ namespace API.Controllers
 
         //UPDATE
         [HttpPut("{id}")]
-        public IActionResult Put(int id, Division division)
+        public IActionResult Put(int id, Position position)
         {
-            var data = myContext.Divisions.Find(id);
-            data.Name = division.Name;
-            myContext.Divisions.Update(data);
+            var data = myContext.Positions.Find(id);
+            data.Name = position.Name;
+            myContext.Positions.Update(data);
 
             if (myContext.SaveChanges() > 0)
             {
@@ -95,8 +95,8 @@ namespace API.Controllers
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
-            var data = myContext.Divisions.Find(id);
-            myContext.Divisions.Remove(data);
+            var data = myContext.Positions.Find(id);
+            myContext.Positions.Remove(data);
 
             if (myContext.SaveChanges() > 0)
             {
@@ -108,6 +108,5 @@ namespace API.Controllers
             }
 
         }
-
     }
 }

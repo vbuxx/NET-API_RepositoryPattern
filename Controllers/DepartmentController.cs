@@ -1,21 +1,19 @@
 ﻿using API.Context;
 using API.Models;
-using Microsoft.AspNetCore.Http;
+using API.ViewModels.Department;
 using Microsoft.AspNetCore.Mvc;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class DivisionController : ControllerBase
+    public class DepartmentController : ControllerBase
     {
         MyContext myContext;
 
-        public DivisionController(MyContext myContext)
+        public DepartmentController(MyContext myContext)
         {
             this.myContext = myContext;
         }
@@ -24,10 +22,21 @@ namespace API.Controllers
         [HttpGet]
         public IActionResult Index()
         {
-            var data = myContext.Divisions.ToList();
-            if (data != null)
+            var data = myContext.Departments.ToList();
+
+            _Department departmentList = new _Department();
+            foreach (Department department in data) {
+                departmentList.Departments.Add(new _Department() {
+                    Id = department.Id,
+                    Name = department.Name,
+                    DivisionId = department.DivisionId
+            });
+                
+            };
+
+            if (departmentList.Departments != null)
             {
-                return Ok(new { message = "Sukses", statusCode = 200, data = data });
+                return Ok(new { message = "Sukses", statusCode = 200, data = departmentList.Departments });
             }
             else
             {
@@ -38,11 +47,16 @@ namespace API.Controllers
         [HttpGet("{id}")]
         public IActionResult Index(int id)
         {
-            var data = myContext.Divisions.Find(id);
-
-            if (data != null)
+            var data = myContext.Departments.Find(id);
+            _Department result = new _Department() { 
+            Id=data.Id,
+            Name=data.Name,
+            DivisionId=data.DivisionId
+            };
+            
+            if (result != null)
             {
-                return Ok(new { message = "Sukses", statusCode = 200, data = data });
+                return Ok(new { message = "Sukses", statusCode = 200, data = result });
             }
             else
             {
@@ -54,10 +68,15 @@ namespace API.Controllers
 
         //CREATE
         [HttpPost]
-        public IActionResult Post(Division division)
+        public IActionResult Post(_Department department)
         {
-
-            myContext.Divisions.Add(division);
+            Department result = new Department()
+            {
+                Id = department.Id,
+                Name = department.Name,
+                DivisionId = department.DivisionId
+            };
+            myContext.Departments.Add(result);
             if (myContext.SaveChanges() > 0)
             {
                 return Ok(new { message = "Sukses tambah data", statusCode = 200 });
@@ -73,11 +92,12 @@ namespace API.Controllers
 
         //UPDATE
         [HttpPut("{id}")]
-        public IActionResult Put(int id, Division division)
+        public IActionResult Put(int id, _Department department)
         {
-            var data = myContext.Divisions.Find(id);
-            data.Name = division.Name;
-            myContext.Divisions.Update(data);
+            var data = myContext.Departments.Find(id);
+            data.Name = department.Name;
+            data.DivisionId = department.DivisionId;
+            myContext.Departments.Update(data);
 
             if (myContext.SaveChanges() > 0)
             {
@@ -95,8 +115,8 @@ namespace API.Controllers
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
-            var data = myContext.Divisions.Find(id);
-            myContext.Divisions.Remove(data);
+            var data = myContext.Departments.Find(id);
+            myContext.Departments.Remove(data);
 
             if (myContext.SaveChanges() > 0)
             {
@@ -108,6 +128,5 @@ namespace API.Controllers
             }
 
         }
-
     }
 }

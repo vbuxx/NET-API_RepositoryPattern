@@ -1,5 +1,6 @@
 ﻿using API.Context;
 using API.Models;
+using API.ViewModels.Region;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -11,11 +12,11 @@ namespace API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class DivisionController : ControllerBase
+    public class RegionController : ControllerBase
     {
         MyContext myContext;
 
-        public DivisionController(MyContext myContext)
+        public RegionController(MyContext myContext)
         {
             this.myContext = myContext;
         }
@@ -24,10 +25,23 @@ namespace API.Controllers
         [HttpGet]
         public IActionResult Index()
         {
-            var data = myContext.Divisions.ToList();
-            if (data != null)
+            var data = myContext.Regions.ToList();
+
+            _Region reg = new _Region();
+            foreach (Region region in data)
             {
-                return Ok(new { message = "Sukses", statusCode = 200, data = data });
+                reg.Regions.Add(new _Region()
+                {
+                    Id = region.Id,
+                    Name = region.Name,
+                    DivisionId = region.DivisionId
+                });
+
+            };
+
+            if (reg.Regions != null)
+            {
+                return Ok(new { message = "Sukses", statusCode = 200, data = reg.Regions });
             }
             else
             {
@@ -38,11 +52,17 @@ namespace API.Controllers
         [HttpGet("{id}")]
         public IActionResult Index(int id)
         {
-            var data = myContext.Divisions.Find(id);
-
-            if (data != null)
+            var data = myContext.Regions.Find(id);
+            _Region result = new _Region()
             {
-                return Ok(new { message = "Sukses", statusCode = 200, data = data });
+                Id = data.Id,
+                Name = data.Name,
+                DivisionId = data.DivisionId
+            };
+
+            if (result != null)
+            {
+                return Ok(new { message = "Sukses", statusCode = 200, data = result });
             }
             else
             {
@@ -54,10 +74,15 @@ namespace API.Controllers
 
         //CREATE
         [HttpPost]
-        public IActionResult Post(Division division)
+        public IActionResult Post(_Region region)
         {
-
-            myContext.Divisions.Add(division);
+            Region result = new Region()
+            {
+                Id = region.Id,
+                Name = region.Name,
+                DivisionId = region.DivisionId
+            };
+            myContext.Regions.Add(result);
             if (myContext.SaveChanges() > 0)
             {
                 return Ok(new { message = "Sukses tambah data", statusCode = 200 });
@@ -73,11 +98,12 @@ namespace API.Controllers
 
         //UPDATE
         [HttpPut("{id}")]
-        public IActionResult Put(int id, Division division)
+        public IActionResult Put(int id, _Region region)
         {
-            var data = myContext.Divisions.Find(id);
-            data.Name = division.Name;
-            myContext.Divisions.Update(data);
+            var data = myContext.Regions.Find(id);
+            data.Name = region.Name;
+            data.DivisionId = region.DivisionId;
+            myContext.Regions.Update(data);
 
             if (myContext.SaveChanges() > 0)
             {
@@ -95,8 +121,8 @@ namespace API.Controllers
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
-            var data = myContext.Divisions.Find(id);
-            myContext.Divisions.Remove(data);
+            var data = myContext.Regions.Find(id);
+            myContext.Regions.Remove(data);
 
             if (myContext.SaveChanges() > 0)
             {
@@ -108,6 +134,5 @@ namespace API.Controllers
             }
 
         }
-
     }
 }
