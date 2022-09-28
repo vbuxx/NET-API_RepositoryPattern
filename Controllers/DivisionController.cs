@@ -1,5 +1,6 @@
 ﻿using API.Context;
 using API.Models;
+using API.Repositories.Data;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -13,18 +14,21 @@ namespace API.Controllers
     [ApiController]
     public class DivisionController : ControllerBase
     {
-        MyContext myContext;
 
-        public DivisionController(MyContext myContext)
+        DivisionRepository divisionRepository;
+
+        public DivisionController(DivisionRepository divisionRepository)
         {
-            this.myContext = myContext;
+            this.divisionRepository = divisionRepository;
         }
 
         //READ
         [HttpGet]
-        public IActionResult Index()
+        public IActionResult Get()
         {
-            var data = myContext.Divisions.ToList();
+
+            var data = divisionRepository.Get();
+           
             if (data != null)
             {
                 return Ok(new { message = "Sukses", statusCode = 200, data = data });
@@ -36,9 +40,9 @@ namespace API.Controllers
         }
 
         [HttpGet("{id}")]
-        public IActionResult Index(int id)
+        public IActionResult Get(int id)
         {
-            var data = myContext.Divisions.Find(id);
+            var data = divisionRepository.Get(id);
 
             if (data != null)
             {
@@ -57,14 +61,14 @@ namespace API.Controllers
         public IActionResult Post(Division division)
         {
 
-            myContext.Divisions.Add(division);
-            if (myContext.SaveChanges() > 0)
+            var result = divisionRepository.Post(division);
+            if ( result > 0)
             {
                 return Ok(new { message = "Sukses tambah data", statusCode = 200 });
             }
             else
             {
-                return BadRequest(new { message = "Gagal tambah data", statusCode = 200 });
+                return BadRequest(new { message = "Gagal tambah data", statusCode = 400 });
             }
 
 
@@ -72,20 +76,17 @@ namespace API.Controllers
         }
 
         //UPDATE
-        [HttpPut("{id}")]
-        public IActionResult Put(int id, Division division)
+        [HttpPut]
+        public IActionResult Put(Division division)
         {
-            var data = myContext.Divisions.Find(id);
-            data.Name = division.Name;
-            myContext.Divisions.Update(data);
-
-            if (myContext.SaveChanges() > 0)
+            var result = divisionRepository.Put(division);
+            if (result > 0)
             {
                 return Ok(new { message = "Sukses ubah data", statusCode = 200 });
             }
             else
             {
-                return BadRequest(new { message = "Gagal ubah data", statusCode = 200 });
+                return BadRequest(new { message = "Gagal ubah data", statusCode = 400 });
             }
 
         }
@@ -95,16 +96,14 @@ namespace API.Controllers
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
-            var data = myContext.Divisions.Find(id);
-            myContext.Divisions.Remove(data);
-
-            if (myContext.SaveChanges() > 0)
+            var result = divisionRepository.Delete(id);
+            if (result > 0)
             {
                 return Ok(new { message = "Sukses hapus data", statusCode = 200 });
             }
             else
             {
-                return BadRequest(new { message = "Gagal hapus data", statusCode = 200 });
+                return BadRequest(new { message = "Gagal hapus data", statusCode = 400 });
             }
 
         }

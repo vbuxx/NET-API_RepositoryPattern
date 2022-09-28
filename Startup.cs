@@ -16,6 +16,7 @@ using System.Threading.Tasks;
 using System.Reflection;
 using System.IO;
 using Microsoft.OpenApi.Models;
+using API.Repositories.Data;
 
 namespace API
 {
@@ -56,6 +57,10 @@ namespace API
                     }
                 });
             });
+
+            #region Dependency Injection
+            services.AddScoped<DivisionRepository>();
+            #endregion Dependency Injection
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
