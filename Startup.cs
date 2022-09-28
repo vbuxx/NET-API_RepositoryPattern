@@ -40,8 +40,8 @@ namespace API
                 c.SwaggerDoc("v1", new OpenApiInfo
                 {
                     Version = "v1",
-                    Title = "ToDo API",
-                    Description = "A simple example ASP.NET Core Web API",
+                    Title = "MyCompanies API",
+                    Description = "A simple ASP.NET Core Web API with CRUD Funcionality",
                     TermsOfService = new Uri("https://example.com/terms"),
                     Contact = new OpenApiContact
                     {
